@@ -1,7 +1,7 @@
-import { FunctionComponent } from "react";
+import { FC } from "react";
 import { BoardSlot } from "./BoardSlot";
 
-export const Board: FunctionComponent<{ data: (number | null)[]; heading: string; marked: Set<number> }> = ({
+export const Board: FC<{ data: (number | null)[]; heading: string; marked: Set<number> }> = ({
   data,
   heading,
   marked,

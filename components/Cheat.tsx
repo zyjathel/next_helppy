@@ -1,6 +1,7 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { BaseButton } from "./BaseButton";
 
-export const Cheat: FunctionComponent<{
+export const Cheat: FC<{
   onConfirm: (number: number) => void;
   disabled?: boolean;
 }> = ({ onConfirm, disabled = false }) => {
@@ -28,21 +29,21 @@ export const Cheat: FunctionComponent<{
         type="number"
         disabled={disabled}
         placeholder="Type a number here"
-        className="py-2 px-2 rounded-sm text-gray-800 border-b-2  font-mono border-gray-800 focus:border-none"
+        className="py-2 px-2 rounded-sm  border-b-2  font-mono border-gray-800 focus:border-none"
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
         }}
       ></input>
-      <button
-        className="bg-yellow-200 px-4 py-2 rounded-sm text-gray-800 disabled:cursor-not-allowed ml-2 disabled:bg-gray-300"
+      <BaseButton
+        color="yellow"
         disabled={disabled}
         onClick={() => {
           onConfirm(parseInt(input));
         }}
       >
         Cheat
-      </button>
+      </BaseButton>
     </div>
   );
 };

@@ -1,14 +1,14 @@
-import { FunctionComponent, useState } from "react";
+import { FC, useState } from "react";
 
 type UsernameInputProps = {
   onConfirm: (name: string) => void;
 };
-export const UsernameInput: FunctionComponent<UsernameInputProps> = ({ onConfirm }) => {
+export const UsernameInput: FC<UsernameInputProps> = ({ onConfirm }) => {
   const [input, setInput] = useState<string>("");
 
   return (
     <div
-      className="h-screen w-screen bg-slate-100 items-center  justify-center flex text-gray-800 flex-col  font-mono"
+      className="h-screen w-screen bg-slate-100 items-center  justify-center flex  flex-col  font-mono"
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           onConfirm(input);

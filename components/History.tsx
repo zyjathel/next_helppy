@@ -1,6 +1,6 @@
-import { FunctionComponent } from "react";
+import { FC } from "react";
 
-export const History: FunctionComponent<{ data: number[] }> = ({ data }) => {
+export const History: FC<{ data: number[] }> = ({ data }) => {
   return (
     <div className="flex flex-col">
       <p className="text-md">Previous numbers:</p>

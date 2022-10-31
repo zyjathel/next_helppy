@@ -1,17 +1,18 @@
-import { FunctionComponent, useEffect } from "react";
+import { FC, useEffect } from "react";
 import shallow from "zustand/shallow";
 import { Board } from "./Board";
 import { Cheat } from "./Cheat";
 import { History } from "./History";
 import { AuthenticatedAppState, useAppStore, useGameStore } from "../store/store";
+import { BaseButton } from "./BaseButton";
 
-export const Game: FunctionComponent<{}> = () => {
+export const Game: FC<{}> = () => {
   const username = useAppStore((state) => (state as AuthenticatedAppState).username);
 
   const seed = useGameStore((state) => state.seed);
   const board = useGameStore((state) => state.board);
 
-  const isGameOver = useGameStore((state) => state.isGameOver);
+  const isGameOver = useGameStore((state) => state.isOver);
 
   const history = useGameStore((state) => state.history);
 
@@ -30,21 +31,17 @@ export const Game: FunctionComponent<{}> = () => {
         {isGameOver && (
           <p className="p-4 bg-purple-100 my-8 text-lg">The game took {history.length} turns.</p>
         )}
-        <button className="bg-red-200 px-4 py-1 rounded-sm text-gray-800" onClick={restart}>
+        <BaseButton onClick={restart} color="orange">
           Restart
-        </button>
+        </BaseButton>
       </div>
       <div className="p-10">
         <Board data={board} heading={seed} marked={new Set(history)} />
       </div>
       <div className="p-10">
-        <button
-          className="bg-blue-200 px-4 py-1 rounded-sm text-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
-          onClick={() => next()}
-          disabled={isGameOver}
-        >
+        <BaseButton color="blue" onClick={() => next()} disabled={isGameOver}>
           Next
-        </button>
+        </BaseButton>
       </div>
       <div className="p-10">
         <Cheat onConfirm={next} disabled={isGameOver} />
