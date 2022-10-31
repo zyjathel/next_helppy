@@ -1,6 +1,9 @@
+import { GameType } from "./game";
+
 // code from web
 export function shuffle<T extends any>(array: T[]) {
-  let currentIndex = array.length, randomIndex;
+  let currentIndex = array.length,
+    randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex !== 0) {
@@ -19,10 +22,24 @@ export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 export function calculateWinningStates(n: number) {
-  const winningByRows = Array.from(Array(n).keys()).map((i) => Array.from(Array(n).keys()).map((j) => j + n * i)
+  const winningByRows = Array.from(Array(n).keys()).map((i) =>
+    Array.from(Array(n).keys()).map((j) => j + n * i),
   );
-  const winningByColumns = Array.from(Array(n).keys()).map((i) => Array.from(Array(n).keys()).map((j) => j * n + i)
+  const winningByColumns = Array.from(Array(n).keys()).map((i) =>
+    Array.from(Array(n).keys()).map((j) => j * n + i),
   );
   const diagonal = Array.from(Array(n).keys()).map((i) => i * (n + 1));
   return [...winningByRows, ...winningByColumns, diagonal];
+}
+
+export function generateBoard({ seed, range }: Pick<GameType, "seed" | "range">) {
+  let board: (number | null)[] = [];
+  for (let i = 0; i < seed.length; i++) {
+    const candidates = Array.from(Array(range).keys()).map((x) => x + 1 + range * i);
+    const shuffledSlice = shuffle(candidates).slice(0, seed.length);
+
+    board = [...board, ...shuffledSlice];
+  }
+  board[Math.floor(board.length / 2)] = null;
+  return board;
 }

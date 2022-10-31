@@ -1,85 +1,115 @@
 import create from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { shuffle, calculateWinningStates, randomIntFromInterval } from "./utils";
+import { calculateWinningStates, generateBoard, randomIntFromInterval } from "./utils";
 
-type Game = {
+export type GameType = {
   isOver: boolean;
-  history: number[];
+  numberHistory: number[];
+  startedAt: number | null;
+  endedAt: number | null;
   // null is the *free* one
   board: (number | null)[];
   next(number?: number): void;
   shuffle(): void;
   seed: string;
-  rangeBasedOnSeed: number;
+  range: number;
   winningStates: number[][];
+  updateSeed: (seed: string) => void;
+  transpose: () => void;
+  resume: (state: GameInitProps) => void;
 };
 
-export const useGameStore = create<Game>()(
+export type GameInitProps = Pick<GameType, "board" | "numberHistory" | "startedAt" | "seed" | "range">;
+
+export const useGameStore = create<GameType>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        isOver: false,
-        history: [],
-        board: [],
-        seed: "BINGO",
-        shuffle: () => {
-          let board: (number | null)[] = [];
-          const { seed, rangeBasedOnSeed: range } = get();
-          for (let i = 0; i < seed.length; i++) {
-            const candidates = Array.from(Array(range).keys()).map((x) => x + 1 + range * i);
-            const shuffledSlice = shuffle(candidates).slice(0, seed.length);
-            // .sort((a, b) => a - b);
+    // persist(
+    immer((set, get) => ({
+      isOver: false,
+      numberHistory: [],
+      board: [],
+      startedAt: null,
+      endedAt: null,
+      seed: "BINGO",
+      resume: (prevState) => {
+        set((state) => {
+          state.board = prevState.board;
+          state.startedAt = prevState.startedAt;
+          state.numberHistory = prevState.numberHistory;
+          state.seed = prevState.seed;
+          state.range = prevState.range;
+        });
+      },
+      shuffle: () => {
+        const { seed, range } = get();
+        const board = generateBoard({ seed, range });
 
-            board = [...board, ...shuffledSlice];
-          }
-          board[Math.floor(board.length / 2)] = null;
-          set((state) => {
-            state.board = board;
-            state.history = [];
-            state.winningStates = calculateWinningStates(seed.length);
-            state.isOver = false;
-          });
-        },
-        next: (number) => {
-          const { seed, rangeBasedOnSeed: range, history, winningStates, board, isOver } = get();
+        set((state) => {
+          state.board = board;
+          state.numberHistory = [];
+          state.winningStates = calculateWinningStates(seed.length);
+          state.isOver = false;
+          state.startedAt = Date.now();
+        });
+      },
+      next: (number) => {
+        const { seed, range: range, numberHistory: history, winningStates, board, isOver } = get();
 
-          if (isOver) {
+        if (isOver) {
+          return;
+        }
+
+        let roll: number;
+
+        if (number) {
+          if (history.includes(number)) {
             return;
-          }
-
-          let roll: number;
-
-          if (number) {
-            if (history.includes(number)) {
-              return;
-            } else {
-              roll = number;
-            }
           } else {
+            roll = number;
+          }
+        } else {
+          roll = randomIntFromInterval(1, range * seed.length);
+          while (history.includes(roll)) {
             roll = randomIntFromInterval(1, range * seed.length);
-            while (history.includes(roll)) {
-              roll = randomIntFromInterval(1, range * seed.length);
-            }
           }
+        }
 
+        set((state) => {
+          state.numberHistory.push(roll);
+        });
+
+        const hasGameFinished = winningStates.some((indices) =>
+          indices.every((index) => board[index] === null || history.includes(board[index]!)),
+        );
+
+        if (hasGameFinished) {
           set((state) => {
-            state.history.push(roll);
+            state.isOver = true;
+            state.endedAt = Date.now();
           });
-
-          const hasGameFinished = winningStates.some((indices) =>
-            indices.every((index) => board[index] === null || history.includes(board[index]!)),
-          );
-
-          if (hasGameFinished) {
-            set((state) => {
-              state.isOver = true;
-            });
-          }
-        },
-        rangeBasedOnSeed: 15,
-        winningStates: [],
-      })),
-    ),
+        }
+      },
+      range: 15,
+      winningStates: [],
+      transpose: () => {
+        const { board, seed } = get();
+        const newBoard = Array(board.length);
+        for (let i = 0; i < board.length; i++) {
+          const j = i % seed.length;
+          newBoard[i] = board[j * seed.length + i];
+        }
+        set((state) => {
+          state.board = newBoard;
+        });
+      },
+      updateSeed: (seed) => {
+        set((state) => {
+          state.seed = seed;
+        });
+        get().shuffle();
+      },
+    })),
+    // ),
   ),
 );

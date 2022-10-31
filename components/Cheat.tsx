@@ -15,7 +15,7 @@ export const Cheat: FC<{
 
   return (
     <div
-      className="flex items-center h-full w-full text-sm"
+      className="flex items-start h-full w-full text-sm"
       onKeyDown={(e) => {
         if (disabled) {
           return;
@@ -28,8 +28,8 @@ export const Cheat: FC<{
       <input
         type="number"
         disabled={disabled}
-        placeholder="Type a number here"
-        className="py-2 px-2 rounded-sm  border-b-2  font-mono border-gray-800 focus:border-none"
+        placeholder="Type a number..."
+        className="py-0.5 mr-1 px-2 rounded-sm  border-b  font-mono border-gray-700 focus:border-none  invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 bg-zinc-100"
         value={input}
         onChange={(e) => {
           setInput(e.target.value);

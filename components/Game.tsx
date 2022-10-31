@@ -1,56 +1,64 @@
 import { FC, useEffect } from "react";
 import shallow from "zustand/shallow";
+import { GameInitProps, useGameStore } from "../store/store";
+import { BaseButton } from "./BaseButton";
 import { Board } from "./Board";
 import { Cheat } from "./Cheat";
-import { History } from "./History";
-import { AuthenticatedAppState, useAppStore, useGameStore } from "../store/store";
-import { BaseButton } from "./BaseButton";
+import { Landing } from "./Landing";
 
-export const Game: FC<{}> = () => {
-  const username = useAppStore((state) => (state as AuthenticatedAppState).username);
+const NextNumber: FC<{ value: number }> = () => {
+  return <div></div>;
+};
 
-  const seed = useGameStore((state) => state.seed);
-  const board = useGameStore((state) => state.board);
+export const Game: FC<{ initState?: GameInitProps }> = ({ initState }) => {
+  const [seed, board, isGameOver, next, restart, history, resume] = useGameStore(
+    (state) => [
+      state.seed,
+      state.board,
+      state.isOver,
+      state.next,
+      state.shuffle,
+      state.numberHistory,
+      state.resume,
+    ],
+    shallow,
+  );
 
-  const isGameOver = useGameStore((state) => state.isOver);
-
-  const history = useGameStore((state) => state.history);
-
-  const next = useGameStore((state) => state.next, shallow);
-
-  const restart = useGameStore((state) => state.shuffle, shallow);
-
-  useEffect(restart, [restart]);
+  useEffect(() => {
+    if (initState) {
+      resume(initState);
+    }
+  }, [initState, resume]);
 
   return (
     <div className="bg-slate-50 flex h-screen w-screen flex-col">
-      <div className="bg-slate-100 text-xl py-4 px-10">
-        <h1>{username}'s Game</h1>
+      <div className="py-4 px-10">
+        <Landing />
       </div>
-      <div className="p-10">
-        {isGameOver && (
+      <div className="px-10 py-4">
+        {/* {isGameOver && (
           <p className="p-4 bg-purple-100 my-8 text-lg">The game took {history.length} turns.</p>
-        )}
+        )} */}
         <BaseButton onClick={restart} color="orange">
           Restart
         </BaseButton>
       </div>
-      <div className="p-10">
+      <div className="px-10 py-4">
         <Board data={board} heading={seed} marked={new Set(history)} />
       </div>
-      <div className="p-10">
+      <div className="px-10 py-4">
         <BaseButton color="blue" onClick={() => next()} disabled={isGameOver}>
           Next
         </BaseButton>
       </div>
-      <div className="p-10">
+      <div className="px-10 py-12">
         <Cheat onConfirm={next} disabled={isGameOver} />
       </div>
-      {history.length > 0 && (
+      {/* {history.length > 0 && (
         <div className="p-10">
           <History data={history} />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

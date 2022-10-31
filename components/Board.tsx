@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { BoardSlot } from "./BoardSlot";
+import { BoardHeadingSlot, BoardNumberSlot } from "./BoardSlot";
 
 export const Board: FC<{ data: (number | null)[]; heading: string; marked: Set<number> }> = ({
   data,
@@ -12,13 +12,16 @@ export const Board: FC<{ data: (number | null)[]; heading: string; marked: Set<n
 
   return (
     <div
-      className="grid font-mono"
+      className="grid font-mono border border-gray-500"
       style={{ gridTemplateColumns: `1fr `.repeat(columnsCount), gridTemplateRows: `1fr`.repeat(rowsCount) }}
     >
+      {heading.split("").map((char, i) => (
+        <BoardHeadingSlot key={i} text={char} />
+      ))}
       {data.map((numberOrNull, i) => (
-        <BoardSlot
+        <BoardNumberSlot
           key={i}
-          text={numberOrNull ? numberOrNull.toString() : "Free"}
+          text={numberOrNull ? numberOrNull.toString() : "*"}
           marked={numberOrNull ? marked.has(numberOrNull) : true}
         />
       ))}
