@@ -141,10 +141,10 @@ export const Game: FC<{ initState?: GameInitProps }> = ({ initState }) => {
         <Landing />
       </div>
       <div className="px-10 py-4 w-full flex items-center divide-x gap-4">
-        <BaseButton onClick={shuffle} color="orange">
+        <BaseButton onClick={shuffle} color="orange" data-testId="restart">
           Restart
         </BaseButton>
-        <BaseButton onClick={transpose} color="blue">
+        <BaseButton onClick={transpose} color="blue" data-testId="transpose">
           Transpose
         </BaseButton>
       </div>

@@ -21,7 +21,7 @@ export const Landing: FC<{}> = () => {
   }
 
   return (
-    <div className="text-3xl tracking-wider border-b-2 border-gray-800 py-2">
+    <div className="text-3xl tracking-wider border-b-2 border-gray-800 py-2" role="navigation">
       <h1>
         {username + "'s"}
         {seedInput === null ? (
