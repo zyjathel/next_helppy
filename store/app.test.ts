@@ -1,4 +1,4 @@
-import { useAppStore, UnauthenticatedState, AuthenticatedAppState } from "./app";
+import { UnauthenticatedState, useAppStore } from "./app";
 
 describe("The app store", () => {
   it("should have authenticated = false in the initial state", () => {

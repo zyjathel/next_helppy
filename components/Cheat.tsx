@@ -27,6 +27,7 @@ export const Cheat: FC<{
     >
       <input
         type="number"
+        pattern="[0-9]+"
         disabled={disabled}
         placeholder="Type a number..."
         className="py-0.5 mr-1 px-2 rounded-sm  border-b  font-mono border-gray-700 focus:border-none  invalid:border-pink-500 invalid:text-pink-600 focus:invalid:border-pink-500 focus:invalid:ring-pink-500 bg-zinc-100"
@@ -37,7 +38,7 @@ export const Cheat: FC<{
       ></input>
       <BaseButton
         color="yellow"
-        disabled={disabled}
+        disabled={disabled || input.length === 0}
         onClick={() => {
           onConfirm(parseInt(input));
         }}
