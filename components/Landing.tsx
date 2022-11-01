@@ -23,8 +23,7 @@ export const Landing: FC<{}> = () => {
   return (
     <div className="text-3xl tracking-wider border-b-2 border-gray-800 py-2">
       <h1>
-        {username}
-        's
+        {username + "'s"}
         {seedInput === null ? (
           <span
             className="relative hover:bg-orange-500 hover:cursor-caret transition-colors hover:text-zinc-50 px-2 hover:py-1 text-orange-500 italic font-bold"
