@@ -13,6 +13,7 @@ const NextNumber: FC<{}> = () => {
 
   const [handle, setHandle] = useState<Exclude<ReturnType<typeof controlledNext>, undefined>>();
 
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const { number } = useSpring({
     reset: false,
     reverse: false,
@@ -22,27 +23,32 @@ const NextNumber: FC<{}> = () => {
     config: config.molasses,
     onRest: () => {
       if (!handle) return;
-      console.log(123);
+      setIsAnimating(false);
       handle.start();
+    },
+    onStart: () => {
+      setIsAnimating(true);
     },
   });
 
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="p-2">
-        <BaseButton
-          color="emerald"
-          onClick={() => {
-            const next = controlledNext();
-            if (!next) {
-              return;
-            }
-            setHandle(next);
-          }}
-          disabled={isOver}
-        >
-          Next
-        </BaseButton>
+        <div className={isAnimating ? "invisible" : "visible"}>
+          <BaseButton
+            color="emerald"
+            onClick={() => {
+              const next = controlledNext();
+              if (!next) {
+                return;
+              }
+              setHandle(next);
+            }}
+            disabled={isOver}
+          >
+            Next
+          </BaseButton>
+        </div>
       </div>
 
       <div className=" text-8xl font-mono font-bold py-3 ">
