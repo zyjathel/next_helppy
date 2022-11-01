@@ -136,7 +136,7 @@ export const Game: FC<{ initState?: GameInitProps }> = ({ initState }) => {
   }, [initState, resume]);
 
   return (
-    <div className="bg-slate-50 flex h-screen w-screen flex-col relative">
+    <div className="bg-slate-50 flex flex-col relative">
       <div className="py-4 px-10">
         <Landing />
       </div>
