@@ -4,6 +4,7 @@ import { Game } from "../components/Game";
 import { UsernameInput } from "../components/UsernameInput";
 import { GameInitProps, UnauthenticatedState, useAppStore } from "../store/store";
 import { generateBoard } from "../store/utils";
+import { useHasHydrated } from "../hooks/useHasHydrated";
 
 type PageProps = {
   initGameState: GameInitProps;
@@ -33,9 +34,11 @@ const IndexPage: NextPage<PageProps> = ({ initGameState }) => {
     shallow,
   );
 
+  const hydrated = useHasHydrated();
+
   return (
     <div className="text-gray-800">
-      {authenticated ? <Game initState={initGameState} /> : <UsernameInput onConfirm={auth} />}
+      {hydrated && (authenticated ? <Game initState={initGameState} /> : <UsernameInput onConfirm={auth} />)}
     </div>
   );
 };

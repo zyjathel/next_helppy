@@ -17,17 +17,17 @@ export type AppState = UnauthenticatedState | AuthenticatedAppState;
 
 export const useAppStore = create<AppState>()(
   devtools(
-    // persist(
-    immer((set, get) => ({
-      authenticated: false,
-      username: null,
-      auth: (name) => {
-        set((state) => {
-          state.authenticated = true;
-          state.username = name;
-        });
-      },
-    })),
-    // ),
+    persist(
+      immer((set, get) => ({
+        authenticated: false,
+        username: null,
+        auth: (name) => {
+          set((state) => {
+            state.authenticated = true;
+            state.username = name;
+          });
+        },
+      })),
+    ),
   ),
 );
