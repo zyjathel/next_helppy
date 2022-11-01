@@ -10,8 +10,16 @@ export type GameType = {
   endedAt: number | null;
   // null is the *free* one
   board: (number | null)[];
-  next(number?: number): void;
-  shuffle(): void;
+  _transitToNext: (number: number) => void;
+  _proposeNumber: () => number | undefined;
+  next: (number?: number) => void;
+  controlledNext: () =>
+    | {
+        roll: number;
+        start: () => void;
+      }
+    | undefined;
+  shuffle: () => void;
   seed: string;
   range: number;
   winningStates: number[][];
@@ -54,30 +62,35 @@ export const useGameStore = create<GameType>()(
           state.startedAt = Date.now();
         });
       },
-      next: (number) => {
-        const { seed, range: range, numberHistory: history, winningStates, board, isOver } = get();
+      _proposeNumber: () => {
+        if (get().isOver) {
+          return;
+        }
+        const { seed, range: range, numberHistory: history } = get();
 
-        if (isOver) {
+        let roll = randomIntFromInterval(1, range * seed.length);
+        while (history.includes(roll)) {
+          roll = randomIntFromInterval(1, range * seed.length);
+        }
+        return roll;
+      },
+      controlledNext: () => {
+        const roll = get()._proposeNumber();
+
+        if (!roll) {
           return;
         }
 
-        let roll: number;
-
-        if (number) {
-          if (history.includes(number)) {
-            return;
-          } else {
-            roll = number;
-          }
-        } else {
-          roll = randomIntFromInterval(1, range * seed.length);
-          while (history.includes(roll)) {
-            roll = randomIntFromInterval(1, range * seed.length);
-          }
-        }
+        return {
+          roll,
+          start: () => get()._transitToNext(roll),
+        };
+      },
+      _transitToNext: (number) => {
+        const { winningStates, board } = get();
 
         set((state) => {
-          state.numberHistory.push(roll);
+          state.numberHistory.push(number);
         });
 
         const hasGameFinished = winningStates.some((indices) =>
@@ -90,6 +103,14 @@ export const useGameStore = create<GameType>()(
             state.endedAt = Date.now();
           });
         }
+      },
+      next: (number) => {
+        const roll = number ?? get()._proposeNumber();
+        if (!roll) {
+          return;
+        }
+
+        get()._transitToNext(roll);
       },
       range: 15,
       winningStates: [],

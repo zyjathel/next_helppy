@@ -1,58 +1,60 @@
-import { Component, FC, ReactElement, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { animated, config, useSpring } from "react-spring";
 import shallow from "zustand/shallow";
-import { GameInitProps, GameType, useGameStore } from "../store/store";
+import { GameInitProps, useGameStore } from "../store/store";
 import { BaseButton } from "./BaseButton";
 import { Board } from "./Board";
 import { Celebrate } from "./Celebrate";
 import { Cheat } from "./Cheat";
 import { Landing } from "./Landing";
 
-const NextNumber: FC<{ value: number; show: boolean }> = ({ value, show }) => {
-  return <div className="fixed bottom-3 border border-gray-800 font-mono text-4xl">{value}</div>;
+const NextNumber: FC<{}> = () => {
+  const [isOver, controlledNext] = useGameStore((state) => [state.isOver, state.controlledNext], shallow);
+
+  const [handle, setHandle] = useState<Exclude<ReturnType<typeof controlledNext>, undefined>>();
+
+  const { number } = useSpring({
+    reset: false,
+    reverse: false,
+    from: { number: 0 },
+    number: handle?.roll,
+    delay: 100,
+    config: config.molasses,
+    onRest: () => {
+      if (!handle) return;
+      console.log(123);
+      handle.start();
+    },
+  });
+
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <div className="p-2">
+        <BaseButton
+          color="emerald"
+          onClick={() => {
+            const next = controlledNext();
+            if (!next) {
+              return;
+            }
+            setHandle(next);
+          }}
+          disabled={isOver}
+        >
+          Next
+        </BaseButton>
+      </div>
+
+      <div className=" text-8xl font-mono font-bold py-3 ">
+        <animated.div className="p-4">{number.to((n) => n.toFixed(0))}</animated.div>
+      </div>
+    </div>
+  );
 };
 
-// type BingoProps = Pick<
-//   GameType,
-//   "seed" | "board" | "isOver" | "next" | "shuffle" | "numberHistory" | "transpose"
-// >;
-
-// const Bingo: FC<BingoProps> = ({
-//   seed,
-//   shuffle: restart,
-//   transpose,
-//   isOver,
-//   board,
-//   numberHistory: history,
-//   next,
-// }) => {
-//   return (
-//     <div className="bg-slate-50 flex h-screen w-screen flex-col">
-//       <div className="py-4 px-10">
-//         <Landing />
-//       </div>
-//       <div className="px-10 py-4 w-full flex items-center divide-x gap-4">
-//         <BaseButton onClick={restart} color="orange">
-//           Restart
-//         </BaseButton>
-//         <BaseButton onClick={transpose} color="blue">
-//           Transpose
-//         </BaseButton>
-//       </div>
-//       <div className="px-10 py-4 relative">
-//         <Celebrate show={isOver} />
-//         <Board data={board} heading={seed} marked={new Set(history)} />
-//       </div>
-//       <div className="px-10 py-4 w-full flex items-center justify-center">
-//         <BaseButton color="emerald" onClick={() => next()} disabled={isOver}>
-//           Next
-//         </BaseButton>
-//       </div>
-//       <div className="px-10 py-12">
-//         <Cheat onConfirm={next} disabled={isOver} />
-//       </div>
-//     </div>
-//   );
-// };
+const GameOver: FC<{}> = () => {
+  return <div></div>;
+};
 
 export const Game: FC<{ initState?: GameInitProps }> = ({ initState }) => {
   const [seed, board, isOver, next, shuffle, numberHistory, resume, transpose] = useGameStore(
@@ -92,10 +94,8 @@ export const Game: FC<{ initState?: GameInitProps }> = ({ initState }) => {
         <Celebrate show={isOver} />
         <Board data={board} heading={seed} marked={new Set(numberHistory)} />
       </div>
-      <div className="px-10 py-4 w-full flex items-center justify-center">
-        <BaseButton color="emerald" onClick={() => next()} disabled={isOver}>
-          Next
-        </BaseButton>
+      <div className="px-10 py-4 w-full">
+        <NextNumber />
       </div>
       <div className="px-10 py-12">
         <Cheat onConfirm={next} disabled={isOver} />
