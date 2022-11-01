@@ -6,9 +6,7 @@ const confirmHandler = jest.fn();
 
 describe("The `Cheat` component", () => {
   beforeEach(() => {
-    const { getByRole } = render(<Cheat onConfirm={confirmHandler} />);
-    // const input = getByRole("spinbutton");
-    // userEvent.type(input, "10");
+    render(<Cheat onConfirm={confirmHandler} />);
   });
 
   it("Should have an enabled input element with place holder `Type a number...`", () => {
@@ -22,7 +20,7 @@ describe("The `Cheat` component", () => {
 
 describe("Handle user input", () => {
   beforeEach(() => {
-    const { getByRole } = render(<Cheat onConfirm={confirmHandler} />);
+    render(<Cheat onConfirm={confirmHandler} />);
     const input = screen.getByRole("spinbutton");
     userEvent.type(input, "10");
   });
@@ -38,7 +36,7 @@ describe("Handle user input", () => {
 
 describe("Click the confirm button", () => {
   beforeEach(() => {
-    const { getByRole } = render(<Cheat onConfirm={confirmHandler} />);
+    render(<Cheat onConfirm={confirmHandler} />);
     const input = screen.getByRole("spinbutton");
     userEvent.type(input, "10");
     userEvent.click(screen.getByRole("button"));
