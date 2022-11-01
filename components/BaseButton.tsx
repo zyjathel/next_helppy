@@ -15,10 +15,14 @@ export const BaseButton: FC<BaseButtonProps> = ({ color, ...props }) => {
       className={classNames(
         "px-4 py-1 rounded-sm  disabled:cursor-not-allowed disabled:bg-gray-300 hover:saturate-150 hover:shadow-sm hover:text-gray-700",
       )}
-      style={{
-        //@ts-ignore
-        backgroundColor: fullConfig.theme?.colors?.[color]?.["200"] ?? "white",
-      }}
+      style={
+        props.disabled
+          ? {}
+          : {
+              //@ts-ignore
+              backgroundColor: fullConfig.theme?.colors?.[color]?.["200"] ?? "white",
+            }
+      }
       {...props}
     ></button>
   );

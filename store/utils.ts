@@ -22,14 +22,15 @@ export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 export function calculateWinningStates(n: number) {
-  const winningByRows = Array.from(Array(n).keys()).map((i) =>
-    Array.from(Array(n).keys()).map((j) => j + n * i),
-  );
-  const winningByColumns = Array.from(Array(n).keys()).map((i) =>
-    Array.from(Array(n).keys()).map((j) => j * n + i),
-  );
-  const diagonal = Array.from(Array(n).keys()).map((i) => i * (n + 1));
-  return [...winningByRows, ...winningByColumns, diagonal];
+  const range = Array.from(Array(n).keys());
+
+  const winningByRows = range.map((i) => Array.from(Array(n).keys()).map((j) => j + n * i));
+
+  const winningByColumns = range.map((i) => Array.from(Array(n).keys()).map((j) => j * n + i));
+  const diagonal = range.map((i) => i * (n + 1));
+  const reversedDiagonal = range.map((i) => i * (n - 1));
+
+  return [...winningByRows, ...winningByColumns, diagonal, reversedDiagonal];
 }
 
 export function generateBoard({ seed, range }: Pick<GameType, "seed" | "range">) {

@@ -39,6 +39,7 @@ export const useGameStore = create<GameType>()(
           state.numberHistory = prevState.numberHistory;
           state.seed = prevState.seed;
           state.range = prevState.range;
+          state.winningStates = calculateWinningStates(prevState.seed.length);
         });
       },
       shuffle: () => {
@@ -80,7 +81,7 @@ export const useGameStore = create<GameType>()(
         });
 
         const hasGameFinished = winningStates.some((indices) =>
-          indices.every((index) => board[index] === null || history.includes(board[index]!)),
+          indices.every((index) => board[index] === null || get().numberHistory.includes(board[index]!)),
         );
 
         if (hasGameFinished) {
@@ -95,9 +96,10 @@ export const useGameStore = create<GameType>()(
       transpose: () => {
         const { board, seed } = get();
         const newBoard = Array(board.length);
-        for (let i = 0; i < board.length; i++) {
-          const j = i % seed.length;
-          newBoard[i] = board[j * seed.length + i];
+        for (let i = 0; i < seed.length; i++) {
+          for (let j = 0; j < seed.length; j++) {
+            newBoard[i * seed.length + j] = board[j * seed.length + i];
+          }
         }
         set((state) => {
           state.board = newBoard;

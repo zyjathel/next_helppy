@@ -16,7 +16,7 @@ export const Board: FC<{ data: (number | null)[]; heading: string; marked: Set<n
       style={{ gridTemplateColumns: `1fr `.repeat(columnsCount), gridTemplateRows: `1fr`.repeat(rowsCount) }}
     >
       {heading.split("").map((char, i) => (
-        <BoardHeadingSlot key={i} text={char} />
+        <BoardHeadingSlot key={i} text={char.toUpperCase()} />
       ))}
       {data.map((numberOrNull, i) => (
         <BoardNumberSlot
