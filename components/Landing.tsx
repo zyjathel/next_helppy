@@ -17,7 +17,7 @@ export const Landing: FC<{}> = () => {
   }, [seedInput]);
 
   if (!username) {
-    throw new Error("This should not happen.");
+    return <></>;
   }
 
   return (

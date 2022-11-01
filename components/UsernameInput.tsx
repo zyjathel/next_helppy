@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 type UsernameInputProps = {
   onConfirm: (name: string) => void;
@@ -7,13 +7,16 @@ export const UsernameInput: FC<UsernameInputProps> = ({ onConfirm }) => {
   const [input, setInput] = useState<string>("");
 
   const ref = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const handleEnter = (e: KeyboardEvent) => {
+  const handleEnter = useCallback(
+    (e: KeyboardEvent) => {
       if (e.key === "Enter") {
         onConfirm(input);
       }
-    };
+    },
+    [input, onConfirm],
+  );
+
+  useEffect(() => {
     // auto-complete
     // maybe there is a better way
     if (ref.current) {
@@ -24,7 +27,7 @@ export const UsernameInput: FC<UsernameInputProps> = ({ onConfirm }) => {
     return () => {
       document.removeEventListener("keydown", handleEnter);
     };
-  }, [input, onConfirm]);
+  }, [handleEnter]);
 
   return (
     <div className="h-screen w-screen bg-slate-100 items-center  justify-center flex  flex-col  font-mono">
@@ -49,7 +52,6 @@ export const UsernameInput: FC<UsernameInputProps> = ({ onConfirm }) => {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              console.log(e, 1);
               onConfirm(input);
             }
           }}

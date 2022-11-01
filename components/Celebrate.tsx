@@ -4,7 +4,6 @@ import party from "party-js";
 export const Celebrate: FC<{ show: boolean }> = ({ show }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    console.log(show);
     if (!ref.current) return;
     if (!show) return;
     party.confetti(ref.current);
